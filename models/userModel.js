@@ -40,6 +40,7 @@ const userSchema = new mongoose.Schema({
   role: {
     type: String,
     default: "user",
+    select: false,
   },
 
   messages: [
@@ -59,6 +60,11 @@ userSchema.pre("save", async function (next) {
 
 userSchema.pre("save", function (next) {
   this.createdAt = Date.now();
+  next();
+});
+
+userSchema.pre(/^find/, function (next) {
+  this.select("-__v");
   next();
 });
 

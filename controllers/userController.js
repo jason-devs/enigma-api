@@ -1,11 +1,18 @@
 import User from "../models/userModel.js";
+import AppError from "../utils/appError.js";
+import { catchAsyncErrors } from "../utils/helpers.js";
 
-export const getMyAccount = (req, res, next) => {
+export const getMyAccount = catchAsyncErrors(async (req, res, next) => {
+  const { _id: id } = req.currentUser;
+  const user = await User.findById(id);
+
   res.status(200).json({
     status: "success",
-    message: "Hey, from getMyAccount.",
+    data: {
+      user,
+    },
   });
-};
+});
 
 export const updateMyAccount = (req, res, next) => {
   res.status(200).json({
