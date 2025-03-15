@@ -1,6 +1,7 @@
+import jwt from "jsonwebtoken";
+import { promisify } from "util";
 import User from "../models/userModel.js";
 import AppError from "../utils/appError.js";
-import jwt from "jsonwebtoken";
 import { catchAsyncErrors } from "../utils/helpers.js";
 
 const signJWT = id => {
@@ -77,12 +78,51 @@ export const resetPassword = (req, res, next) => {
   });
 };
 
-export const protect = (req, res, next) => {
-  console.log("protecting");
-  next();
-};
+export const protect = catchAsyncErrors(async (req, res, next) => {
+  const { JWT_SECRET } = process.env;
+  const { authorization } = req.headers;
 
-export const restrict = (req, res, next) => {
-  console.log("restricting");
+  if (!authorization) {
+    return next(new AppError(`No authorization in header, please fix!`, 401));
+  }
+
+  const token = authorization.split(" ")[1];
+
+  if (!token) {
+    return next(
+      new AppError(`You need to log in before you can access this route!`, 401),
+    );
+  }
+
+  const verify = await promisify(jwt.verify)(token, JWT_SECRET);
+
+  const { id } = verify;
+  const user = await User.findById(id);
+
+  if (!user) {
+    return next(
+      new AppError(
+        `Couldn't find you in our database, please check your authentication or log in again!`,
+        404,
+      ),
+    );
+  }
+
+  req.currentUser = user;
   next();
-};
+});
+
+export const restrict =
+  (...roles) =>
+  (req, res, next) => {
+    const { role } = req.user;
+    if (!roles.includes(role)) {
+      return next(
+        new AppError(
+          `You are not permitted to access this feature, sorry!`,
+          401,
+        ),
+      );
+    }
+    next();
+  };

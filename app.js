@@ -1,4 +1,11 @@
 import express from "express";
+import morgan from "morgan";
+import rateLimit from "express-rate-limit";
+import helmet from "helmet";
+import mongoSanitize from "express-mongo-sanitize";
+import xss from "xss-clean";
+import hpp from "hpp";
+import cookieParser from "cookie-parser";
 
 import encryptRouter from "./routers/encryptRouter.js";
 import decryptRouter from "./routers/decryptRouter.js";
@@ -8,6 +15,40 @@ import globalErrorHandler from "./controllers/errorController.js";
 import AppError from "./utils/appError.js";
 
 const app = express();
+const limiter = rateLimit({
+  max: 100,
+  windowMs: 60 * 60 * 1000,
+  message:
+    "Too many requests from this IP address. Please try again in an hour.",
+});
+
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+  }),
+);
+
+if (process.env.NODE_ENV === "development") {
+  app.use(morgan("dev"));
+}
+
+app.use("/api", limiter);
+app.use(express.json({ limit: "10kb" }));
+app.use(cookieParser());
+app.use(mongoSanitize());
+app.use(xss());
+app.use(
+  hpp({
+    whitelist: [
+      "duration",
+      "ratingsAverage",
+      "ratingsQuantity",
+      "maxGroupSize",
+      "difficulty",
+      "price",
+    ],
+  }),
+);
 
 app.use(express.json());
 

@@ -1,14 +1,21 @@
 import AppError from "../utils/appError.js";
 
+const handleJWTError = function () {
+  return new AppError(
+    `Authentication failed. Please try logging in again!`,
+    401,
+  );
+};
+
 const handleDuplicateKeyError = function (...keys) {
-  new AppError(
+  return new AppError(
     `The following: (${keys}) already exists in our database, sorry!`,
     400,
   );
 };
 
 const handleValidatorError = function (message) {
-  new AppError(`${message}`, 400);
+  return new AppError(`${message}`, 400);
 };
 
 const respondDev = (err, res) => {
@@ -53,6 +60,11 @@ const globalErrorHandler = (err, req, res, next) => {
       const { message } = err;
       err = handleValidatorError(message);
     }
+
+    if (err.name === "JsonWebTokenError") {
+      err = handleJWTError();
+    }
+
     if (err.code === 11000) {
       const { keyValue } = err;
       const keys = Object.keys(keyValue);
