@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import validator from "validator";
 import bcrypt from "bcryptjs";
 
-const userSchema = mongoose.Schema({
+const userSchema = new mongoose.Schema({
   name: {
     type: String,
     required: [true, "Please give us your name!"],
@@ -10,8 +10,9 @@ const userSchema = mongoose.Schema({
 
   email: {
     type: String,
-    validate: validator.isEmail,
+    validate: [validator.isEmail, "Please enter a valid email address!"],
     required: [true, "Please give us your email!"],
+    unique: true,
   },
 
   password: {
@@ -24,6 +25,12 @@ const userSchema = mongoose.Schema({
   passwordConfirm: {
     type: String,
     required: [true, "Please confirm your password!"],
+    validate: {
+      validator: function () {
+        return this.password === this.passwordConfirm;
+      },
+      message: "Passwords do not match. Please check and try again!",
+    },
   },
 
   createdAt: {

@@ -1,3 +1,16 @@
+import AppError from "../utils/appError.js";
+
+const handleDuplicateKeyError = function (...keys) {
+  new AppError(
+    `The following: (${keys}) already exists in our database, sorry!`,
+    400,
+  );
+};
+
+const handleValidatorError = function (message) {
+  new AppError(`${message}`, 400);
+};
+
 const respondDev = (err, res) => {
   const { status = "error", statusCode = 500, message, stack } = err;
 
@@ -36,6 +49,16 @@ const globalErrorHandler = (err, req, res, next) => {
   }
 
   if (NODE_ENV === "production") {
+    if (err.name === "ValidationError") {
+      const { message } = err;
+      err = handleValidatorError(message);
+    }
+    if (err.code === 11000) {
+      const { keyValue } = err;
+      const keys = Object.keys(keyValue);
+      err = handleDuplicateKeyError(keys);
+    }
+
     respondProd(err, res);
   }
 };

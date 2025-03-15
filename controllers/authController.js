@@ -11,6 +11,27 @@ const signJWT = id => {
   return token;
 };
 
+const sendJWT = (user, token, res) => {
+  const { NODE_ENV, JWT_COOKIE_EXPIRY } = process.env;
+
+  const cookieOptions = {
+    expires: new Date(Date.now() + JWT_COOKIE_EXPIRY * 24 * 60 * 60 * 1000),
+    httpOnly: true,
+  };
+
+  if (NODE_ENV === "production") cookieOptions.secure = true;
+
+  res.cookie("jwt", token, cookieOptions);
+
+  res.status(200).json({
+    status: "success",
+    token,
+    data: {
+      user,
+    },
+  });
+};
+
 export const login = (req, res, next) => {
   res.status(200).json({
     status: "success",
@@ -39,13 +60,7 @@ export const signup = catchAsyncErrors(async (req, res, next) => {
   const token = signJWT(id);
   const newUser = await User.findById(id).select("-password -messages -role");
 
-  res.status(201).json({
-    status: "success",
-    token,
-    data: {
-      newUser,
-    },
-  });
+  sendJWT(newUser, token, res);
 });
 
 export const forgotPassword = (req, res, next) => {
