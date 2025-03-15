@@ -12,14 +12,4 @@ router
   .patch(userController.updateMyAccount)
   .delete(userController.deleteMyAccount);
 
-router
-  .route("/my-messages")
-  .get(userController.getMyMessages)
-  .delete(userController.deleteMyMessages);
-
-router
-  .route("/my-messages/:messageId")
-  .get(userController.getMessage)
-  .delete(userController.deleteMessage);
-
 export default router;

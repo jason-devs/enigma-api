@@ -11,6 +11,7 @@ import encryptRouter from "./routers/encryptRouter.js";
 import decryptRouter from "./routers/decryptRouter.js";
 import authRouter from "./routers/authRouter.js";
 import userRouter from "./routers/userRouter.js";
+import messageRouter from "./routers/messageRouter.js";
 import globalErrorHandler from "./controllers/errorController.js";
 import AppError from "./utils/appError.js";
 
@@ -37,23 +38,13 @@ app.use(express.json({ limit: "10kb" }));
 app.use(cookieParser());
 app.use(mongoSanitize());
 app.use(xss());
-app.use(
-  hpp({
-    whitelist: [
-      "duration",
-      "ratingsAverage",
-      "ratingsQuantity",
-      "maxGroupSize",
-      "difficulty",
-      "price",
-    ],
-  }),
-);
+app.use(hpp());
 
 app.use(express.json());
 
 app.use(`/api/v1/auth`, authRouter);
 app.use(`/api/v1/user`, userRouter);
+app.use(`/api/v1/message`, messageRouter);
 app.use(`/api/v1/encrypt`, encryptRouter);
 app.use(`/api/v1/decrypt`, decryptRouter);
 

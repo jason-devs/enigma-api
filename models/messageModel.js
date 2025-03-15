@@ -20,6 +20,11 @@ const messageSchema = mongoose.Schema({
   },
 });
 
+messageSchema.pre(/^find/, function (next) {
+  this.select("-__v");
+  next();
+});
+
 const Message = mongoose.model("Message", messageSchema);
 
 export default Message;

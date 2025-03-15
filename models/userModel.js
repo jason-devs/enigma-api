@@ -42,13 +42,6 @@ const userSchema = new mongoose.Schema({
     default: "user",
     select: false,
   },
-
-  messages: [
-    {
-      type: mongoose.Schema.ObjectId,
-      ref: "Message",
-    },
-  ],
 });
 
 userSchema.pre("save", async function (next) {
