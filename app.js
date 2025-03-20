@@ -7,8 +7,7 @@ import xss from "xss-clean";
 import hpp from "hpp";
 import cookieParser from "cookie-parser";
 
-import encryptRouter from "./routers/encryptRouter.js";
-import decryptRouter from "./routers/decryptRouter.js";
+import enigmaRouter from "./routers/enigmaRouter.js";
 import authRouter from "./routers/authRouter.js";
 import userRouter from "./routers/userRouter.js";
 import messageRouter from "./routers/messageRouter.js";
@@ -45,8 +44,7 @@ app.use(express.json());
 app.use(`/api/v1/auth`, authRouter);
 app.use(`/api/v1/user`, userRouter);
 app.use(`/api/v1/message`, messageRouter);
-app.use(`/api/v1/encrypt`, encryptRouter);
-app.use(`/api/v1/decrypt`, decryptRouter);
+app.use(`/api/v1/enigma`, enigmaRouter);
 
 app.all("*", (req, res, next) => {
   const error = new AppError(

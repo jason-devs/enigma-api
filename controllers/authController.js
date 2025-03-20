@@ -7,6 +7,8 @@ import AppError from "../utils/appError.js";
 import { catchAsyncErrors } from "../utils/helpers.js";
 import sendEmail from "../utils/email.js";
 
+//BUG: Getting wrong error when ot providing API key in protectKey.
+
 export const restrict =
   (...roles) =>
   (req, res, next) => {
