@@ -7,8 +7,6 @@ import AppError from "../utils/appError.js";
 import { catchAsyncErrors } from "../utils/helpers.js";
 import sendEmail from "../utils/email.js";
 
-//BUG: Getting wrong error when ot providing API key in protectKey.
-
 export const restrict =
   (...roles) =>
   (req, res, next) => {
@@ -264,47 +262,14 @@ export const userProtect = catchAsyncErrors(async (req, res, next) => {
   next();
 });
 
-// export const userProtect = catchAsyncErrors(async (req, res, next) => {
-//   const { JWT_SECRET } = process.env;
-//   const { authorization } = req.headers;
-
-//   if (!authorization) {
-//     return next(new AppError(`No authorization in header, please fix!`, 401));
-//   }
-
-//   const token = authorization.split(" ")[1];
-
-//   if (!token) {
-//     return next(
-//       new AppError(`You need to log in before you can access this route!`, 401),
-//     );
-//   }
-
-//   const verify = await promisify(jwt.verify)(token, JWT_SECRET);
-
-//   const { id } = verify;
-//   const user = await User.findById(id);
-
-//   if (!user) {
-//     return next(
-//       new AppError(
-//         `Couldn't find you in our database, please check your authentication or log in again!`,
-//         404,
-//       ),
-//     );
-//   }
-
-//   req.currentUser = user;
-//   next();
-// });
-
 export const keyProtect = catchAsyncErrors(async (req, res, next) => {
   const { key } = req.headers;
-  const identifier = key.slice(0, 15);
 
   if (!key) {
     return next(new AppError(`No authorization in header, please fix!`, 401));
   }
+
+  const identifier = key.slice(0, 15);
 
   const apiKey = await ApiKey.findOne({ identifier });
 
