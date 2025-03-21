@@ -11,6 +11,7 @@ import enigmaRouter from "./routers/enigmaRouter.js";
 import authRouter from "./routers/authRouter.js";
 import userRouter from "./routers/userRouter.js";
 import messageRouter from "./routers/messageRouter.js";
+import settingsRouter from "./routers/settingsRouter.js";
 import globalErrorHandler from "./controllers/errorController.js";
 import AppError from "./utils/appError.js";
 
@@ -44,6 +45,7 @@ app.use(express.json());
 app.use(`/api/v1/auth`, authRouter);
 app.use(`/api/v1/user`, userRouter);
 app.use(`/api/v1/message`, messageRouter);
+app.use(`/api/v1/settings`, settingsRouter);
 app.use(`/api/v1/enigma`, enigmaRouter);
 
 app.all("*", (req, res, next) => {
