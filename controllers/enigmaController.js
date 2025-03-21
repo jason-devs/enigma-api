@@ -1,8 +1,7 @@
-import { catchAsyncErrors } from "../utils/helpers.js";
 import Settings from "../enigma/settings.js";
 import Enigma from "../enigma/enigma.js";
 
-const process = (text, settings) => {
+const getOutput = (text, settings) => {
   const enigma = new Enigma(settings);
 
   const output = text
@@ -13,7 +12,8 @@ const process = (text, settings) => {
   return output;
 };
 
-export const encrypt = (req, res, next) => {
+// eslint-disable-next-line import/prefer-default-export
+export const sendOutput = (req, res, next) => {
   const { text } = req.body;
   const { rotors, reflector, plugboard, ringPositions, startRotations } =
     req.body.settings;
@@ -26,7 +26,7 @@ export const encrypt = (req, res, next) => {
     startRotations,
   );
 
-  const output = process(text, settings);
+  const output = getOutput(text, settings);
 
   res.status(200).json({
     status: "success",
@@ -36,9 +36,3 @@ export const encrypt = (req, res, next) => {
     },
   });
 };
-
-export function decrypt(cyphertext, settings) {
-  console.log(cyphertext);
-  console.log(settings);
-  return "This is what was said.";
-}
