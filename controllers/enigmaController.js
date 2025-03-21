@@ -1,14 +1,41 @@
-import * as helpers from "../utils/helpers.js";
+import { catchAsyncErrors } from "../utils/helpers.js";
+import Settings from "../enigma/settings.js";
+import Enigma from "../enigma/enigma.js";
 
-export function encrypt(plaintext, settings) {
-  //prettier-ignore
-  const alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
-  console.log({ settings });
-  const output = Array.from({ length: plaintext.length }, () =>
-    alphabet[helpers.randomNumber()].toUpperCase(),
-  ).join("");
+const process = (text, settings) => {
+  const enigma = new Enigma(settings);
+
+  const output = text
+    .split("")
+    .map(letter => enigma.encrypt(letter))
+    .join("");
+
   return output;
-}
+};
+
+export const encrypt = (req, res, next) => {
+  const { text } = req.body;
+  const { rotors, reflector, plugboard, ringPositions, startRotations } =
+    req.body.settings;
+
+  const settings = new Settings(
+    rotors,
+    reflector,
+    plugboard,
+    ringPositions,
+    startRotations,
+  );
+
+  const output = process(text, settings);
+
+  res.status(200).json({
+    status: "success",
+    data: {
+      output,
+      settings,
+    },
+  });
+};
 
 export function decrypt(cyphertext, settings) {
   console.log(cyphertext);
