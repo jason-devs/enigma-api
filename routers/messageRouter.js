@@ -9,7 +9,7 @@ router.use(authController.userProtect);
 router
   .route("/")
   .get(messageController.getMessages)
-  .post(messageController.newMessage)
+  .post(messageController.saveMessage)
   .delete(messageController.deleteMessages);
 
 router

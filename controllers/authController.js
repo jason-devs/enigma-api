@@ -2,7 +2,7 @@ import crypto from "crypto";
 import jwt from "jsonwebtoken";
 import { promisify } from "util";
 import User from "../models/userModel.js";
-import ApiKey from "../models/apiKey.js";
+import ApiKey from "../models/apiKeyModel.js";
 import AppError from "../utils/appError.js";
 import { catchAsyncErrors } from "../utils/helpers.js";
 import sendEmail from "../utils/email.js";

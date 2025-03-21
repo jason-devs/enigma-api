@@ -1,12 +1,9 @@
 import mongoose from "mongoose";
 
 const messageSchema = mongoose.Schema({
-  plaintext: {
+  text: {
     type: String,
-  },
-
-  cyphertext: {
-    type: String,
+    required: [true, "Please provide some text!"],
   },
 
   settings: {

@@ -6,6 +6,6 @@ const router = express.Router();
 
 router.use(authController.keyProtect);
 
-router.route("/").post(enigmaController.encrypt);
+router.route("/").post(enigmaController.sendOutput);
 
 export default router;

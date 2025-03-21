@@ -1,6 +1,4 @@
 import variables from "./variables.js";
-// import * as tests from "./tests.js";
-// import Settings from "./settings.js";
 import Rotor from "./rotor.js";
 import Reflector from "./reflector.js";
 import Plugboard from "./plugboard.js";
@@ -13,14 +11,17 @@ class Enigma {
 
   constructor(settings) {
     this.#settings = settings;
-    this.#rotors = settings.rotors.map((rotorNum, i) => {
-      return new Rotor(
-        i,
-        rotorNum,
-        settings.ringPositions[i],
-        settings.startRotations[i],
-      );
-    });
+
+    this.#rotors = settings.rotors.map(
+      (rotorNum, i) =>
+        new Rotor(
+          i,
+          rotorNum,
+          settings.ringPositions[i],
+          settings.startRotations[i],
+        ),
+    );
+
     this.#rotors.forEach((rotor, i) => {
       if (i === 2) return;
       rotor.nextRotor = this.#rotors[i + 1];
