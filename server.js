@@ -20,8 +20,10 @@ const connectDB = async () => {
 
 connectDB();
 
-const { PORT } = process.env;
+const { PORT, HOST, LOCAL_HOST, NODE_ENV } = process.env;
 
-const server = app.listen(PORT, () => {
+const host = NODE_ENV === "production" ? HOST : LOCAL_HOST;
+
+app.listen(PORT, host, () => {
   console.log(`Enigma server listening on port: ${PORT}`);
 });
